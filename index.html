@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SchoolQuiz | Learning Portal</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">Q</span> QuizLet</div>
+    <div id="userArea"></div>
+  </header>
+
+  <main class="container">
+    <section id="authPanel" class="panel auth-panel">
+      <p class="eyebrow">YOUR SCHOOL LEARNING PORTAL</p>
+      <h1>Learn. Practice. Succeed.</h1>
+      <p class="muted">Sign in to access your quizzes and tests.</p>
+
+      <form id="authForm">
+        <label>Email address</label>
+        <input id="email" type="email" required placeholder="you@school.edu">
+
+        <label>Password</label>
+        <input id="password" type="password" minlength="6"
+          required placeholder="At least 6 characters">
+
+        <button type="submit" id="loginButton">Sign in</button>
+        <button type="button" class="secondary" id="signupButton">
+          Create student account
+        </button>
+      </form>
+      <p id="authMessage" class="message"></p>
+    </section>
+
+    <section id="appPanel" hidden>
+      <div class="welcome">
+        <div>
+          <p class="eyebrow">SCHOOLQUIZ DASHBOARD</p>
+          <h1 id="welcomeTitle">Welcome!</h1>
+          <p class="muted" id="welcomeSubtitle"></p>
+        </div>
+      </div>
+
+      <section id="teacherPanel" hidden>
+        <div class="section-heading">
+          <h2>Create a quiz</h2>
+          <p class="muted">Write your questions and answer choices.</p>
+        </div>
+
+        <form id="quizForm" class="panel">
+          <label>Quiz title</label>
+          <input id="quizTitle" required maxlength="100"
+            placeholder="e.g. Introduction to Java">
+
+          <div class="two-columns">
+            <div>
+              <label>Time limit (minutes)</label>
+              <input id="duration" type="number" min="1" max="180"
+                value="15" required>
+            </div>
+            <div>
+              <label>Deadline</label>
+              <input id="deadline" type="datetime-local" required>
+            </div>
+          </div>
+
+          <div id="questionBuilder"></div>
+          <button type="button" id="addQuestion" class="secondary">
+            + Add question
+          </button>
+          <button type="submit">Publish quiz</button>
+          <p id="teacherMessage" class="message"></p>
+        </form>
+
+        <div class="section-heading">
+          <h2>Your quizzes and submissions</h2>
+        </div>
+        <div id="teacherQuizzes" class="quiz-list"></div>
+      </section>
+
+      <section id="studentPanel" hidden>
+        <div class="section-heading">
+          <h2>Available quizzes</h2>
+          <p class="muted">Choose a test and submit before the deadline.</p>
+        </div>
+        <div id="studentQuizzes" class="quiz-list"></div>
+      </section>
+
+      <section id="takingPanel" hidden>
+        <div class="panel">
+          <div class="quiz-heading">
+            <div>
+              <p class="eyebrow">QUIZ IN PROGRESS</p>
+              <h2 id="takingTitle"></h2>
+            </div>
+            <div id="timer" class="timer">--:--</div>
+          </div>
+          <p class="muted" id="quizProgress"></p>
+          <form id="answerForm">
+            <div id="answerQuestions"></div>
+            <button type="submit">Submit answers</button>
+          </form>
+          <p id="answerMessage" class="message"></p>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <footer>SchoolQuiz · A school learning project</footer>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

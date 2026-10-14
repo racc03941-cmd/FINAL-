@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quizora for teachers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --ink: #16213e;
+  --muted: #5d6783;
+  --paper: #eef1f6;
+  --surface: #ffffff;
+  --line: #d5dbe7;
+  --accent: #3d4fd6;
+  --accent-dark: #2d3bb0;
+  --highlight: #ffd23f;
+  --done: #1f8a5b;
+  --progress: #c77d0a;
+  --closed: #8a93a8;
+  --error: #c0392b;
+  color-scheme: light;
+}
+ 
+* { box-sizing: border-box; }
+ 
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Source Sans 3", system-ui, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+}
+ 
+h1, h2, h3, .brand {
+  font-family: "Bricolage Grotesque", "Source Sans 3", system-ui, sans-serif;
+  line-height: 1.15;
+  margin: 0 0 .5rem;
+}
+h1 { font-size: 2rem; font-weight: 700; }
+h2 { font-size: 1.35rem; font-weight: 700; margin-top: 2rem; }
+h3 { font-size: 1.1rem; font-weight: 500; }
+ 
+a { color: var(--accent); }
+.muted { color: var(--muted); margin: .25rem 0; }
+.small { font-size: .95rem; }
+ 
+/* ---------- top bar ---------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .75rem 1.25rem;
+  background: var(--ink);
+  color: #fff;
+}
+.brand { color: #fff; text-decoration: none; font-size: 1.4rem; font-weight: 700; margin: 0; }
+.brand-tag { font-weight: 500; font-size: .95rem; color: var(--highlight); margin-left: .35rem; }
+.user-area { display: flex; align-items: center; gap: .75rem; }
+.nav-link { color: #fff; font-weight: 600; }
+ 
+main { max-width: 880px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+.page-head { margin-bottom: 1.25rem; }
+ 
+/* ---------- surfaces ---------- */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-top: 1rem;
+}
+.panel.narrow { max-width: 460px; margin: 3rem auto 0; }
+.panel h2:first-child { margin-top: 0; }
+ 
+/* ---------- form controls ---------- */
+label { display: block; font-weight: 600; margin: 1rem 0 .3rem; }
+input, select {
+  width: 100%;
+  padding: .6rem .7rem;
+  font: inherit;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid #aab3c8;
+  border-radius: 6px;
+}
+input[type="radio"] { width: auto; accent-color: var(--accent); }
+input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible {
+  outline: 3px solid var(--highlight);
+  outline-offset: 2px;
+}
+ 
+button {
+  font: inherit;
+  font-weight: 600;
+  padding: .6rem 1.1rem;
+  color: #fff;
+  background: var(--accent);
+  border: 2px solid var(--accent);
+  border-radius: 6px;
+  cursor: pointer;
+}
+button:hover:not(:disabled) { background: var(--accent-dark); border-color: var(--accent-dark); }
+button:disabled { background: #c3c9d8; border-color: #c3c9d8; color: #fff; cursor: not-allowed; }
+button.secondary { background: transparent; color: var(--accent); }
+button.secondary:hover:not(:disabled) { background: #e6e9fb; color: var(--accent-dark); }
+button.ghost { background: transparent; color: #fff; border-color: #55608a; }
+button.ghost:hover:not(:disabled) { background: #26335c; border-color: #55608a; }
+ 
+.button-row { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.25rem; }
+.two-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
+ 
+.message { min-height: 1.5rem; margin: .75rem 0 0; font-weight: 600; }
+.message.error { color: var(--error); }
+ 
+/* ---------- quiz lists ---------- */
+.quiz-list { display: grid; gap: .75rem; }
+ 
+.quiz-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 6px solid var(--accent);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+}
+.quiz-card.is-done { border-left-color: var(--done); }
+.quiz-card.is-progress { border-left-color: var(--progress); }
+.quiz-card.is-closed { border-left-color: var(--closed); }
+.quiz-card-main { flex: 1; min-width: 0; }
+.quiz-card h3 { margin-bottom: .15rem; }
+.status { margin: .35rem 0 0; font-weight: 600; }
+.is-done .status { color: var(--done); }
+.is-progress .status { color: var(--progress); }
+ 
+.teacher-card { border-left-color: var(--ink); }
+.tracker { margin-top: .6rem; padding-top: .6rem; border-top: 1px solid var(--line); }
+.tracker p { margin: .2rem 0; }
+.results { list-style: none; margin: .5rem 0; padding: 0; }
+.results li { display: flex; justify-content: space-between; gap: 1rem; padding: .25rem 0; border-bottom: 1px dotted var(--line); }
+ 
+.empty {
+  padding: 1.5rem;
+  background: var(--surface);
+  border: 1px dashed #aab3c8;
+  border-radius: 8px;
+  color: var(--muted);
+}
+ 
+/* ---------- quiz builder ---------- */
+.question-editor {
+  margin-top: 1.25rem;
+  padding: 1rem 1.25rem 1.25rem;
+  background: #f7f8fc;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.question-editor .remove { margin-top: 1rem; }
+ 
+/* ---------- taking a quiz ---------- */
+.timer-bar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 -1.25rem 1rem;
+  padding: .85rem 1.25rem;
+  background: var(--paper);
+  border-bottom: 2px solid var(--ink);
+}
+.timer-bar h2 { margin: 0; }
+.timer {
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
+  font-size: 2.25rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  padding: .1rem .9rem;
+  background: var(--highlight);
+  border-radius: 8px;
+}
+.timer.low { background: var(--error); color: #fff; }
+ 
+.question-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 1rem;
+}
+.choice { display: flex; align-items: center; gap: .6rem; padding: .4rem 0; }
+.choice label { margin: 0; font-weight: 400; cursor: pointer; flex: 1; }
+ 
+/* ---------- small screens ---------- */
+@media (max-width: 600px) {
+  .two-columns { grid-template-columns: 1fr; }
+  .quiz-card { flex-direction: column; align-items: stretch; }
+  .topbar { flex-wrap: wrap; }
+  h1 { font-size: 1.6rem; }
+}
+ 
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="teacher.html">Quizora <span class="brand-tag">for teachers</span></a>
+    <nav id="userArea" class="user-area"></nav>
+  </header>
+ 
+  <main>
+    <!-- Teacher sign in -->
+    <section id="authPanel" class="panel narrow">
+      <h1>Teacher sign in</h1>
+      <p class="muted">Teacher accounts are added by your administrator.</p>
+      <form id="authForm">
+        <label for="email">Email</label>
+        <input id="email" type="email" autocomplete="email" required>
+ 
+        <label for="password">Password</label>
+        <input id="password" type="password" autocomplete="current-password" required>
+ 
+        <div class="button-row">
+          <button type="submit">Sign in</button>
+        </div>
+        <p id="authMessage" class="message" role="status"></p>
+      </form>
+      <p class="muted small">Student? <a href="index.html">Go to the student page</a></p>
+    </section>
+ 
+    <!-- Signed in, but not on the teacher list -->
+    <section id="activatePanel" class="panel narrow" hidden>
+      <h1>This is not a teacher account</h1>
+      <p class="muted">You are signed in as <strong id="activateEmail"></strong>. Teacher accounts are added by your administrator. Ask them to add you, then sign in again.</p>
+      <p class="muted small">Student? <a href="index.html">Go to the student page</a></p>
+    </section>
+ 
+    <!-- Teacher dashboard -->
+    <section id="appPanel" hidden>
+      <div class="page-head">
+        <h1>Teacher dashboard</h1>
+        <p id="welcomeSubtitle" class="muted"></p>
+      </div>
+ 
+      <section class="panel">
+        <h2>Build a quiz</h2>
+        <form id="quizForm">
+          <label for="quizTitle">Quiz title</label>
+          <input id="quizTitle" required maxlength="120" placeholder="Chapter 3 review">
+ 
+          <div class="two-columns">
+            <div>
+              <label for="deadline">Deadline</label>
+              <input id="deadline" type="datetime-local" required>
+            </div>
+            <div>
+              <label for="duration">Time limit (minutes)</label>
+              <input id="duration" type="number" min="1" max="180" value="15" required>
+            </div>
+          </div>
+ 
+          <div id="questionBuilder"></div>
+ 
+          <div class="button-row">
+            <button type="button" id="addQuestion" class="secondary">Add question</button>
+            <button type="submit">Publish quiz</button>
+          </div>
+          <p id="teacherMessage" class="message" role="status"></p>
+        </form>
+      </section>
+ 
+      <section>
+        <h2>Your quizzes</h2>
+        <div id="teacherQuizzes" class="quiz-list"></div>
+      </section>
+    </section>
+  </main>
+ 
+  <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+import {
+  getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import {
+  getDatabase, ref, get, push, query, orderByChild, equalTo, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+ 
+const firebaseConfig = {
+  apiKey: "AIzaSyA6jlVCTXUUOwvncXgkIJX7Ku6z_xkH8Es",
+  authDomain: "quizora-155b6.firebaseapp.com",
+  databaseURL: "https://quizora-155b6-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "quizora-155b6",
+  storageBucket: "quizora-155b6.firebasestorage.app",
+  messagingSenderId: "504478952413",
+  appId: "1:504478952413:web:a936e9d266410645b86434"
+};
+ 
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+ 
+const $ = id => document.getElementById(id);
+let currentUser = null;
+let questionCount = 0;
+ 
+function message(id, text, error = false) {
+  const el = $(id);
+  if (!el) return;
+  el.textContent = text;
+  el.classList.toggle("error", error);
+}
+ 
+function escapeHTML(value = "") {
+  return String(value).replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  })[c]);
+}
+ 
+// ---------------- SCREENS ----------------
+ 
+function show(screen) {
+  $("authPanel").hidden = screen !== "auth";
+  $("activatePanel").hidden = screen !== "activate";
+  $("appPanel").hidden = screen !== "dashboard";
+ 
+  const logoutButton = `<button id="logoutButton" class="ghost">Sign out</button>`;
+  if (screen === "dashboard") {
+    $("userArea").innerHTML = `<a class="nav-link" href="index.html">Student page</a>${logoutButton}`;
+  } else if (screen === "activate") {
+    $("userArea").innerHTML = logoutButton;
+  } else {
+    $("userArea").innerHTML = "";
+  }
+  if (screen !== "auth") {
+    $("logoutButton").addEventListener("click", () => signOut(auth));
+  }
+}
+ 
+// ---------------- TEACHER CHECK ----------------
+// A teacher is anyone listed under teachers/{uid}. The list is edited by hand
+// in the Firebase console, so nobody can add themselves from the website.
+// (Accounts whose users/{uid} role is "teacher" also count.)
+ 
+async function isTeacher(user) {
+  const listed = await get(ref(db, `teachers/${user.uid}`));
+  console.log("Teacher check | uid:", user.uid, "| listed under teachers:", listed.exists());
+  if (listed.exists()) return true;
+ 
+  try {
+    const profile = await get(ref(db, `users/${user.uid}`));
+    return profile.exists() && profile.val().role === "teacher";
+  } catch (error) {
+    return false;
+  }
+}
+ 
+async function enter(user) {
+  currentUser = user;
+  try {
+    message("authMessage", "Checking your account...");
+    if (await isTeacher(user)) {
+      message("authMessage", "");
+      $("welcomeSubtitle").textContent = user.email;
+      show("dashboard");
+      await loadTeacherQuizzes();
+    } else {
+      message("authMessage", "");
+      $("activateEmail").textContent = user.email;
+      show("activate");
+    }
+  } catch (error) {
+    console.error("Account error:", error);
+    message("authMessage", "Could not load your account: " + error.message, true);
+    show("auth");
+  }
+}
+ 
+// ---------------- AUTH ----------------
+ 
+$("authForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  try {
+    message("authMessage", "Signing in...");
+    await signInWithEmailAndPassword(auth, $("email").value.trim(), $("password").value);
+  } catch (error) {
+    message("authMessage", error.message, true);
+  }
+});
+ 
+onAuthStateChanged(auth, async user => {
+  currentUser = user;
+  if (!user) {
+    show("auth");
+    return;
+  }
+  await enter(user);
+});
+ 
+// ---------------- QUIZ BUILDER ----------------
+ 
+function addQuestionEditor() {
+  questionCount++;
+  const el = document.createElement("div");
+  el.className = "question-editor";
+ 
+  el.innerHTML = `
+    <h3>Question ${questionCount}</h3>
+    <label>Question text</label>
+    <input class="question-text" required maxlength="500" placeholder="Type your question">
+ 
+    <div class="two-columns">
+      ${[0, 1, 2, 3].map(i => `
+        <div>
+          <label>Choice ${String.fromCharCode(65 + i)}</label>
+          <input class="option" required maxlength="250"
+            placeholder="Answer choice ${String.fromCharCode(65 + i)}">
+        </div>
+      `).join("")}
+    </div>
+ 
+    <label>Correct answer</label>
+    <select class="correct-answer">
+      <option value="0">Choice A</option>
+      <option value="1">Choice B</option>
+      <option value="2">Choice C</option>
+      <option value="3">Choice D</option>
+    </select>
+ 
+    <button type="button" class="remove secondary">Remove question</button>
+  `;
+ 
+  el.querySelector(".remove").addEventListener("click", () => {
+    el.remove();
+    renumberQuestions();
+  });
+ 
+  $("questionBuilder").appendChild(el);
+}
+ 
+function renumberQuestions() {
+  [...$("questionBuilder").children].forEach((el, i) => {
+    el.querySelector("h3").textContent = `Question ${i + 1}`;
+  });
+  questionCount = $("questionBuilder").children.length;
+}
+ 
+$("addQuestion").addEventListener("click", addQuestionEditor);
+addQuestionEditor();
+ 
+$("quizForm").addEventListener("submit", async event => {
+  event.preventDefault();
+ 
+  const editors = [...$("questionBuilder").children];
+  if (editors.length === 0) {
+    message("teacherMessage", "Add at least one question.", true);
+    return;
+  }
+ 
+  const questions = editors.map(el => ({
+    text: el.querySelector(".question-text").value.trim(),
+    options: [...el.querySelectorAll(".option")].map(input => input.value.trim()),
+    correctIndex: Number(el.querySelector(".correct-answer").value)
+  }));
+ 
+  if (questions.some(q => !q.text || q.options.some(o => !o))) {
+    message("teacherMessage", "Complete every question and answer choice.", true);
+    return;
+  }
+ 
+  const deadline = new Date($("deadline").value);
+  if (Number.isNaN(deadline.getTime()) || deadline <= new Date()) {
+    message("teacherMessage", "Choose a deadline in the future.", true);
+    return;
+  }
+ 
+  const duration = Number($("duration").value);
+  if (!Number.isInteger(duration) || duration < 1 || duration > 180) {
+    message("teacherMessage", "Time limit must be between 1 and 180 minutes.", true);
+    return;
+  }
+ 
+  try {
+    message("teacherMessage", "Publishing quiz...");
+ 
+    await push(ref(db, "quizzes"), {
+      title: $("quizTitle").value.trim(),
+      teacherId: currentUser.uid,
+      teacherEmail: currentUser.email,
+      questions,
+      duration,
+      deadline: deadline.toISOString(),
+      published: true,
+      createdAt: serverTimestamp()
+    });
+ 
+    $("quizForm").reset();
+    $("duration").value = 15;
+    $("questionBuilder").innerHTML = "";
+    questionCount = 0;
+    addQuestionEditor();
+ 
+    message("teacherMessage", "Quiz published.");
+    await loadTeacherQuizzes();
+  } catch (error) {
+    message("teacherMessage", error.message, true);
+  }
+});
+ 
+// ---------------- YOUR QUIZZES ----------------
+ 
+async function loadTeacherQuizzes() {
+  const container = $("teacherQuizzes");
+  container.innerHTML = '<p class="muted">Loading quizzes...</p>';
+ 
+  try {
+    const snapshot = await get(
+      query(ref(db, "quizzes"), orderByChild("teacherId"), equalTo(currentUser.uid))
+    );
+ 
+    if (!snapshot.exists()) {
+      container.innerHTML = '<div class="empty">You have not published any quizzes yet. Build your first one above.</div>';
+      return;
+    }
+ 
+    const quizzes = [];
+    snapshot.forEach(child => {
+      quizzes.push({ id: child.key, ...child.val() });
+    });
+    quizzes.reverse();
+ 
+    container.innerHTML = "";
+ 
+    for (const quiz of quizzes) {
+      const card = document.createElement("article");
+      card.className = "quiz-card teacher-card";
+      card.innerHTML = `
+        <div class="quiz-card-main">
+          <h3>${escapeHTML(quiz.title)}</h3>
+          <p class="muted">${quiz.questions.length} questions, ${quiz.duration} minutes. Due ${new Date(quiz.deadline).toLocaleString()}</p>
+          <div class="tracker"><p class="muted">Loading submissions...</p></div>
+        </div>
+      `;
+      container.appendChild(card);
+ 
+      const tracker = card.querySelector(".tracker");
+      try {
+        const subSnap = await get(
+          query(ref(db, "submissions"), orderByChild("quizId"), equalTo(quiz.id))
+        );
+        const rows = Object.values(subSnap.val() || {});
+        const submitted = rows.filter(s => s.status === "submitted");
+        const inProgress = rows.filter(s => s.status === "in-progress");
+ 
+        tracker.innerHTML = `
+          <p><strong>${submitted.length}</strong> submitted, <strong>${inProgress.length}</strong> in progress</p>
+          ${rows.length === 0 ? '<p class="muted">No one has started this quiz yet.</p>' : `
+            <ul class="results">
+              ${rows.map(s => `
+                <li>
+                  <span>${escapeHTML(s.email || "Student")}</span>
+                  <span>${s.status === "submitted" ? `${s.score}/${s.total}` : "In progress"}</span>
+                </li>
+              `).join("")}
+            </ul>
+            <p class="muted">Students appear here after they start the quiz.</p>
+          `}
+        `;
+      } catch (error) {
+        tracker.textContent = "Unable to load submissions: " + error.message;
+      }
+    }
+  } catch (error) {
+    container.textContent = "Error: " + error.message;
+  }
+}
+  </script>
+</body>
+</html>
+ 
+
+
